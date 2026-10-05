@@ -33,17 +33,40 @@ const words = (function splitWords() {
   return { el, list: el.querySelectorAll('.w') };
 })();
 
+// Proceso: la foto de la izquierda cambia según el paso (al pasar el mouse, tocar o enfocar un paso).
+const processSection = document.querySelector('.process');
+let elegido = false;
+function setStep(i) {
+  document.querySelectorAll('.step').forEach(s => s.classList.toggle('is-on', Number(s.dataset.step) === i));
+  document.querySelectorAll('.process__media img').forEach((im, k) => im.classList.toggle('is-on', k === i));
+}
+document.querySelectorAll('.step').forEach(s => {
+  const elegir = () => { elegido = true; setStep(Number(s.dataset.step)); };
+  s.addEventListener('mouseenter', elegir); s.addEventListener('focus', elegir); s.addEventListener('click', elegir);
+});
+
 // Bucle de scroll: cabecera, titular del hero, desfile horizontal y palabras de la misión.
 (function scrollLoop() {
   const top = document.getElementById('top-bar');
   const heroCopy = document.querySelector('.hero__copy');
-  const lockup = document.querySelector('.hero__lockup');
+  const lockup = document.querySelector('.hero__foot');
   const parade = document.querySelector('.parade');
   const pin = parade && parade.querySelector('.parade__pin');
   const track = parade && parade.querySelector('.parade__track');
   const bg = parade && parade.querySelector('.parade__bg');
   let travel = 0;
   const measure = () => { if (track) travel = Math.max(0, track.scrollWidth - pin.clientWidth); };
+  // Flechas del desfile: saltan a la tarjeta anterior o siguiente (el desfile depende del scroll vertical).
+  if (parade) {
+    const cards = track.querySelectorAll('.card');
+    parade.querySelectorAll('.arrow').forEach(btn => btn.addEventListener('click', () => {
+      const recorrido = parade.offsetHeight - innerHeight;
+      const a = clamp01((scrollY - parade.offsetTop) / recorrido);
+      const n = cards.length - 1;
+      const i = Math.min(n, Math.max(0, Math.round(a * n) + Number(btn.dataset.dir)));
+      scrollTo({ top: parade.offsetTop + (i / n) * recorrido + 1, behavior: REDUCE ? 'instant' : 'smooth' });
+    }));
+  }
 
   function frame() {
     const y = scrollY, vh = innerHeight;
@@ -62,6 +85,12 @@ const words = (function splitWords() {
       const entrada = clamp01((y - (parade.offsetTop - vh)) / vh); // mientras sube sobre la foto
       bg.style.setProperty('--op', String(Math.min(0.94, entrada * 0.35 + a * 1.4)));
     }
+    // Proceso: al bajar por la sección, se enciende el paso 1, 2 y 3 (salvo que el visitante haya elegido uno).
+    if (processSection && !elegido) {
+      const r = processSection.getBoundingClientRect();
+      const p = clamp01((vh * 0.75 - r.top) / (r.height * 0.9));
+      setStep(Math.min(2, Math.floor(p * 3)));
+    }
     // Misión: las palabras se encienden a medida que el párrafo cruza la pantalla.
     if (words) {
       const r = words.el.getBoundingClientRect();
@@ -77,22 +106,6 @@ const words = (function splitWords() {
   measure(); frame();
 })();
 
-// Proceso: la imagen fija cambia según el paso que está en pantalla.
-(function process() {
-  const steps = document.querySelectorAll('.step');
-  const imgs = document.querySelectorAll('.process__media img');
-  if (!steps.length || !('IntersectionObserver' in window)) return;
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const i = Number(e.target.dataset.step);
-      steps.forEach(s => s.classList.toggle('is-on', s === e.target));
-      imgs.forEach((im, k) => im.classList.toggle('is-on', k === i));
-    });
-  }, { rootMargin: '-45% 0px -45% 0px' });
-  steps.forEach(s => io.observe(s));
-})();
-
 // GSAP: entrada del hero, parallax y apariciones. Se carga desde cdnjs; si no está, no pasa nada.
 addEventListener('load', () => {
   const g = window.gsap, ST = window.ScrollTrigger;
@@ -102,8 +115,8 @@ addEventListener('load', () => {
   // Entrada: el titular sube línea por línea y la foto se asienta.
   g.from('.hero__img, .hero video', { scale: 1.14, duration: 2.6, ease: 'power2.out' });
   g.from('.hero h1 .line > span', { yPercent: 110, duration: 1.1, ease: 'power4.out', stagger: 0.12, delay: 0.15 });
-  g.from('.hero__desc, .hero .btn, .hero__lockup', { y: 24, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, delay: 0.6 });
-  g.from('.top', { y: -30, opacity: 0, duration: 0.8, ease: 'power3.out', delay: 0.4 });
+  g.from('.hero__desc, .hero .btn, .hero__foot', { y: 24, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, delay: 0.6 });
+  g.from('.top > *', { y: -30, opacity: 0, duration: 0.8, ease: 'power3.out', delay: 0.4 });
 
   // Tarjetas del desfile: entran en escalera al subir sobre la foto.
   g.from('.card', { y: 80, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.08, scrollTrigger: { trigger: '.parade', start: 'top 85%' } });
@@ -123,7 +136,7 @@ addEventListener('load', () => {
   const tl = document.querySelector('.timeline');
   g.fromTo(tl, { '--draw': 0 }, { '--draw': 1, ease: 'none', scrollTrigger: { trigger: tl, start: 'top 70%', end: 'bottom 60%', scrub: true } });
   g.from('.timeline li', { x: 40, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.15, scrollTrigger: { trigger: tl, start: 'top 75%' } });
-  g.from('.story__luke', { y: 60, opacity: 0, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: '.story__luke', start: 'top 90%' } });
+  g.from('.founder', { y: 60, opacity: 0, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: '.founder', start: 'top 90%' } });
 
   // Públicos y formas de verlo.
   g.from('.audience__list > div', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.audience__list', start: 'top 80%' } });

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lost Eagle | Virtual reality nature studio</title>
 <meta name="description" content="Lost Eagle is a virtual reality nature studio creating immersive experiences that turn connection with nature into conservation.">
 <meta property="og:title" content="Lost Eagle: Experience the Planet. Protect What Matters.">
@@ -41,14 +41,16 @@
 
 <a class="skip" href="#contact">Skip to contact form</a>
 
-<!-- Cabecera flotante sobre la foto -->
+<!-- Cabecera flotante: píldora de vidrio con marca y enlaces, botón verde aparte -->
 <header class="top" id="top-bar">
-  <a href="#inicio" class="brand"><img src="assets/img/logo-blanco.png" alt="Lost Eagle" width="103" height="34"></a>
-  <nav class="top__nav" aria-label="Main">
-    <a href="#places">Places</a>
-    <a href="#mission">Mission</a>
-    <a href="#process">How we capture</a>
-    <a href="#story">Our story</a>
+  <nav class="top__pill" aria-label="Main">
+    <a href="#inicio" class="brand"><img src="assets/img/logo-blanco.png" alt="Lost Eagle" width="103" height="34"></a>
+    <span class="top__links">
+      <a href="#places">Places</a>
+      <a href="#mission">Mission</a>
+      <a href="#process">How we capture</a>
+      <a href="#story">Our story</a>
+    </span>
   </nav>
   <a href="#contact" class="top__cta">Talk to our team</a>
 </header>
@@ -58,11 +60,15 @@
 <div class="hero" id="inicio" data-video="">
   <img class="hero__img" src="assets/img/machu-picchu-amplia.webp" alt="Machu Picchu under the clouds, from a Lost Eagle capture" width="2000" height="1055" fetchpriority="high">
   <div class="hero__copy">
-    <h1><span class="line"><span>Experience the Planet.</span></span><span class="line"><span>Protect What Matters.</span></span></h1>
+    <h1><span class="line"><span>Experience the Planet.</span></span><span class="line line--green"><span>Protect What Matters.</span></span></h1>
     <p class="hero__desc">Lost Eagle is a virtual reality nature studio creating immersive experiences that turn connection with nature into conservation.</p>
-    <a class="btn" href="#contact">Talk to our team</a>
+    <a class="btn" href="#contact">Talk to our team <span aria-hidden="true" class="btn__arrow"></span></a>
   </div>
-  <p class="hero__lockup">Experience. Connect. Protect.</p>
+  <div class="hero__foot">
+    <p class="hero__lockup">Experience. Connect. Protect.</p>
+    <span class="hero__rule" aria-hidden="true"></span>
+    <a class="hero__scroll" href="#places">Scroll <span class="mouse" aria-hidden="true"></span></a>
+  </div>
 </div>
 
 <div class="hero-space" aria-hidden="true"></div>
@@ -72,8 +78,15 @@
   <div class="parade__pin">
     <div class="parade__bg"></div>
     <div class="parade__head">
-      <h2 id="places-title">Experience the world we thought we'd lost.</h2>
-      <p>Real places, captured by our team. Nothing is faked and there is no CGI.</p>
+      <div>
+        <p class="label label--light">Places</p>
+        <h2 id="places-title">Experience the world we thought we'd lost.</h2>
+        <p class="parade__sub">Real places, captured by our team. Nothing is faked and there is no CGI.</p>
+      </div>
+      <div class="arrows">
+        <button type="button" class="arrow" data-dir="-1" aria-label="Previous place"><span aria-hidden="true"></span></button>
+        <button type="button" class="arrow arrow--next" data-dir="1" aria-label="Next place"><span aria-hidden="true"></span></button>
+      </div>
     </div>
     <ul class="parade__track" role="list">
       <li class="card"><img src="assets/img/claustral-canyon.webp" alt="Light falling into Claustral Canyon" loading="lazy"><div class="card__txt"><h3>Claustral Canyon</h3><p class="card__where">Blue Mountains, Australia</p><p>Our first laser scan, funded on Kickstarter in 2013.</p></div></li>
@@ -91,26 +104,23 @@
 <main class="content">
 
   <section class="mission" id="mission" aria-labelledby="mission-title">
-    <div class="wrap">
-      <h2 id="mission-title" class="kicker">Our mission</h2>
+    <img class="mission__mist" src="assets/img/machu-picchu-templo-del-sol.webp" alt="" loading="lazy">
+    <div class="wrap mission__inner">
+      <h2 id="mission-title" class="label">Our mission</h2>
       <p class="reveal-words">We create powerful immersive experiences of the most unexplored and vulnerable parts of the planet. They carry you through awe, deep connection and care for nature, and awaken a strong desire to protect it at all costs.</p>
-
       <h3 class="mission__big">Turn Connection into Conservation.</h3>
       <ol class="beats" role="list">
         <li>
           <div class="beats__img"><img src="assets/img/canon-musgo.webp" alt="Moss-covered canyon walls" loading="lazy"></div>
-          <h4>Experience</h4>
-          <p>Fly through real places, modeled in 3D and mapped with photos and video. It feels real because everything you see was there.</p>
+          <div><h4>Experience</h4><p>Fly through real places, modeled in 3D and mapped with photos and video. Everything you see was there.</p></div>
         </li>
         <li>
           <div class="beats__img"><img src="assets/img/perolniyoc.webp" alt="Perolniyoc waterfall in the Sacred Valley" loading="lazy"></div>
-          <h4>Connect</h4>
-          <p>Stand where few people will ever stand, close enough to build a personal bond with a canyon, a cloud forest or a lost city.</p>
+          <div><h4>Connect</h4><p>Stand where few people will ever stand, close enough to build a personal bond with the place.</p></div>
         </li>
         <li>
           <div class="beats__img"><img src="assets/img/machu-picchu-terrazas.webp" alt="Terraces of Machu Picchu" loading="lazy"></div>
-          <h4>Protect</h4>
-          <p>People protect what they love. Our experiences help conservation teams, schools and funders make others care.</p>
+          <div><h4>Protect</h4><p>People protect what they love. Our experiences help conservation teams, schools and funders make others care.</p></div>
         </li>
       </ol>
     </div>
@@ -119,68 +129,62 @@
   <section class="eagle" aria-labelledby="eagle-title">
     <img class="eagle__img" src="assets/img/aguila-niebla.webp" alt="An eagle flying over misty cliffs" loading="lazy">
     <div class="eagle__copy">
-      <h2 id="eagle-title">Visit Earth's wildest places. Leave no footprint.</h2>
+      <h2 id="eagle-title">Visit Earth's wildest places. <span>Leave no footprint.</span></h2>
       <p>Access to remote and fragile places without the travel emissions.</p>
     </div>
   </section>
 
   <section class="process" id="process" aria-labelledby="process-title">
-    <div class="wrap process__grid">
-      <div class="process__media" aria-hidden="true">
-        <img class="is-on" src="assets/img/equipo-claustral.webp" alt="" loading="lazy">
-        <img src="assets/img/equipo-captura.webp" alt="" loading="lazy">
-        <img src="assets/img/camara-360.webp" alt="" loading="lazy">
-      </div>
-      <div class="process__steps">
-        <h2 id="process-title" class="kicker">The EagleVision&trade; process</h2>
-        <p class="process__lead">Every branch, twig, rock and wall, modeled in 3D.</p>
-        <article class="step" data-step="0">
-          <span class="step__n">1</span>
-          <h3>Plan and capture</h3>
-          <p>We scan and film on location, often with local partners. In Claustral Canyon, that meant carrying a laser scanner into a slot canyon in the Blue Mountains.</p>
-        </article>
-        <article class="step" data-step="1">
-          <span class="step__n">2</span>
-          <h3>Edit and optimize</h3>
-          <p>Laser scanners, drones and cameras build organic 3D models of each place. Real photos and video are mapped onto them, at a resolution 360° cameras can't reach.</p>
-        </article>
-        <article class="step" data-step="2">
-          <span class="step__n">3</span>
-          <h3>Publish and support</h3>
-          <p>The finished place is delivered to headsets and screens, ready for visitors to fly through, and kept up to date.</p>
-        </article>
-      </div>
+    <div class="process__media" aria-hidden="true">
+      <img class="is-on" src="assets/img/equipo-claustral.webp" alt="" loading="lazy">
+      <img src="assets/img/equipo-captura.webp" alt="" loading="lazy">
+      <img src="assets/img/camara-360.webp" alt="" loading="lazy">
+    </div>
+    <div class="process__body">
+      <p class="label">The EagleVision&trade; process</p>
+      <h2 id="process-title">Every branch, twig, rock and wall, modeled in 3D.</h2>
+      <ol class="steps" role="list">
+        <li class="step is-on" data-step="0" tabindex="0"><span class="step__n">1</span><div><h3>Plan and capture</h3><p>We scan and film on location, often with local partners, from slot canyons to Inca cities.</p></div></li>
+        <li class="step" data-step="1" tabindex="0"><span class="step__n">2</span><div><h3>Edit and optimize</h3><p>Laser scans become organic 3D models, mapped with real photos and video at a resolution 360° cameras can't reach.</p></div></li>
+        <li class="step" data-step="2" tabindex="0"><span class="step__n">3</span><div><h3>Publish and support</h3><p>The finished place goes to headsets and screens, ready to fly through, and is kept up to date.</p></div></li>
+      </ol>
     </div>
   </section>
 
   <section class="story" id="story" aria-labelledby="story-title">
     <div class="wrap story__grid">
       <div class="story__intro">
+        <p class="label">Our story</p>
         <h2 id="story-title">Pioneers of VR experiences.</h2>
         <p>Lost Eagle was founded by Luke Farrer, who left a career in law for computer graphics engineering. The studio is based in Boston and captures places from Australia to the Andes.</p>
-        <img class="story__luke" src="assets/img/luke-farrer.webp" alt="Luke Farrer with a laser scanner" loading="lazy">
       </div>
+      <figure class="founder">
+        <img src="assets/img/luke-farrer.webp" alt="Luke Farrer with a laser scanner" loading="lazy">
+        <figcaption><strong>Luke Farrer</strong>Founder, Lost Eagle</figcaption>
+      </figure>
       <ol class="timeline" role="list">
-        <li><span class="timeline__year">2013</span><h3>A canyon on Kickstarter</h3><p>A crowdfunded laser scan of Claustral Canyon, Australia. Today it is exhibited at the Govetts Leap Visitor Centre.</p></li>
-        <li><span class="timeline__year">2021</span><h3>Machu Picchu, without tourists</h3><p>With the site closed, we directed photographers in Cusco remotely from Boston to capture Machu Picchu and Sacsayhuamán.</p></li>
-        <li><span class="timeline__year">2022</span><h3>Real Peru VR</h3><p>The Peru project grew to Huayna Picchu, Choquequirao and the Amazon, made with Cusco partners Tinkuy Travel and Doslados Studios, so people born there can guide each tour.</p></li>
-        <li><span class="timeline__year">Recognition</span><h3>Shortlisted by AIXR</h3><p>“Getting Lost in Nature with Luke” was shortlisted for VR Experience of the Year.</p></li>
+        <li><span class="timeline__year">2013</span><h3>A canyon on Kickstarter</h3><p>A crowdfunded laser scan of Claustral Canyon, now exhibited at the Govetts Leap Visitor Centre.</p></li>
+        <li><span class="timeline__year">2021</span><h3>Machu Picchu, without tourists</h3><p>With the site closed, we directed photographers in Cusco remotely from Boston.</p></li>
+        <li><span class="timeline__year">2022</span><h3>Real Peru VR</h3><p>Huayna Picchu, Choquequirao and the Amazon, made with Cusco partners Tinkuy Travel and Doslados Studios.</p></li>
+        <li><span class="timeline__year">AIXR</span><h3>Shortlisted for VR Experience of the Year</h3><p>For “Getting Lost in Nature with Luke”.</p></li>
       </ol>
     </div>
   </section>
 
   <section class="audience" aria-labelledby="audience-title">
-    <div class="wrap">
-      <h2 id="audience-title">Who we work with</h2>
-      <dl class="audience__list">
-        <div><dt>Partners and investors</dt><dd>Teams building the resilience economy who need people to feel what is at stake.</dd></div>
-        <div><dt>Healthcare and senior living</dt><dd>Calm, simple journeys into nature for people who can no longer travel to it.</dd></div>
-        <div><dt>Schools, universities and museums</dt><dd>Field trips to places no class could reach, and archaeological sites brought indoors.</dd></div>
-        <div><dt>Sustainability and policy leaders</dt><dd>A direct way to show decision-makers the places their choices protect.</dd></div>
-      </dl>
+    <div class="wrap audience__grid">
+      <div>
+        <h2 id="audience-title" class="audience__title">Who we work with</h2>
+        <dl class="audience__list">
+          <div><dt>Partners and investors</dt><dd>Teams building the resilience economy who need people to feel what is at stake.</dd></div>
+          <div><dt>Healthcare and senior living</dt><dd>Calm, simple journeys into nature for people who can no longer travel to it.</dd></div>
+          <div><dt>Schools, universities and museums</dt><dd>Field trips to places no class could reach, and archaeological sites brought indoors.</dd></div>
+          <div><dt>Sustainability and policy leaders</dt><dd>A direct way to show decision-makers the places their choices protect.</dd></div>
+        </dl>
+      </div>
       <div class="ways">
-        <figure><img src="assets/img/visor-mandos.webp" alt="A VR headset with controllers" loading="lazy"><figcaption><strong>In a VR headset</strong> for one person at a time.</figcaption></figure>
-        <figure><img src="assets/img/pantalla-mando.webp" alt="An HD screen showing Lost Eagle, with a game controller" loading="lazy"><figcaption><strong>On an HD screen with a controller</strong> for classrooms, conferences and groups.</figcaption></figure>
+        <figure><img src="assets/img/visor-mandos.webp" alt="A VR headset with controllers" loading="lazy"><figcaption><strong>In a VR headset</strong>For one person at a time.</figcaption></figure>
+        <figure><img src="assets/img/pantalla-mando.webp" alt="An HD screen showing Lost Eagle, with a game controller" loading="lazy"><figcaption><strong>On an HD screen with a controller</strong>For classrooms, conferences and groups.</figcaption></figure>
       </div>
     </div>
   </section>
@@ -208,10 +212,10 @@
             <option>Something else</option>
           </select>
         </div>
-        <div class="field field--wide"><label for="f-msg">Message</label><textarea id="f-msg" name="message" rows="5" required></textarea></div>
+        <div class="field field--wide"><label for="f-msg">Message</label><textarea id="f-msg" name="message" rows="4" required></textarea></div>
         <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="form__end">
-          <button type="submit" class="btn">Send message</button>
+          <button type="submit" class="btn">Send message <span aria-hidden="true" class="btn__arrow"></span></button>
           <p class="form__status" role="status" aria-live="polite"></p>
         </div>
       </form>
@@ -219,19 +223,15 @@
   </section>
 
   <footer class="foot">
-    <div class="wrap foot__grid">
-      <div>
-        <img src="assets/img/logo-blanco.png" alt="Lost Eagle" width="103" height="34">
-        <p class="foot__desc">Lost Eagle is a virtual reality nature studio creating immersive experiences that turn connection with nature into conservation.</p>
-      </div>
-      <div>
-        <h2 class="foot__h">Follow us</h2>
-        <ul class="social" role="list">
-          <li><a href="https://www.instagram.com/losteaglestudios/" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" class="fill"/></svg>Instagram</a></li>
-          <li><a href="https://www.facebook.com/Lost-Eagle-Studios-109590774133790/" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.8 0-4.5 1.9-4.5 4.7V11H7v4h2.5v6h4v-6H17l.5-4h-4V9c0-.6.4-1 1-1z" class="fill"/></svg>Facebook</a></li>
-          <!-- REVISAR: no encontramos el enlace del canal; por ahora va al video de su web -->
-          <li><a href="https://www.youtube.com/watch?v=OfYvU5jLFaA" rel="noopener" target="_blank"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.2 9.2v5.6l4.8-2.8z" class="fill"/></svg>YouTube</a></li>
-        </ul>
+    <div class="wrap foot__row">
+      <img class="foot__logo" src="assets/img/logo-blanco.png" alt="Lost Eagle" width="103" height="34">
+      <p class="foot__desc">A virtual reality nature studio creating immersive experiences that turn connection with nature into conservation.</p>
+      <div class="foot__social">
+        <span class="foot__h">Follow us</span>
+        <a href="https://www.instagram.com/losteaglestudios/" rel="noopener" target="_blank" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" class="fill"/></svg></a>
+        <a href="https://www.facebook.com/Lost-Eagle-Studios-109590774133790/" rel="noopener" target="_blank" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.8 0-4.5 1.9-4.5 4.7V11H7v4h2.5v6h4v-6H17l.5-4h-4V9c0-.6.4-1 1-1z" class="fill"/></svg></a>
+        <!-- REVISAR: no encontramos el enlace del canal; por ahora va al video de su web -->
+        <a href="https://www.youtube.com/watch?v=OfYvU5jLFaA" rel="noopener" target="_blank" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.2 9.2v5.6l4.8-2.8z" class="fill"/></svg></a>
       </div>
       <p class="foot__meta">Lost Eagle Studios LLC<br>Boston, Massachusetts</p>
     </div>
