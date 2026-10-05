@@ -341,3 +341,52 @@ a { color: inherit; }
   .globe__stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: -28px; height: 28px; background: linear-gradient(#FFFFFF, rgba(255,255,255,0)); pointer-events: none; }
   .place__card { opacity: 1; transform: none; }
 }
+
+/* ---------- v5.2 (pedido de Rodrigo, 05/10): la Tierra en el espacio ----------
+   Fondo de la sección del globo = mapa de estrellas de la NASA (Deep Star Maps 2020, dominio público, datos reales de satélites).
+   Capa fija del tamaño de la pantalla (sticky) dentro de la sección: el cielo queda quieto y la Tierra gira. */
+.globe { color: var(--white); }
+.globe__bg { background: #03060C; opacity: 1; overflow: hidden; }
+.globe__sky { position: sticky; top: 0; height: 100svh; background: #03060C url(../img/espacio-nasa.webp) center / cover no-repeat; }
+@media (prefers-reduced-motion: no-preference) and (min-width: 901px) {
+  .globe__sky { animation: cielo 140s linear infinite alternate; }
+  @keyframes cielo { from { background-position: 42% 50%; } to { background-position: 58% 50%; } }
+}
+.globe .label--light { color: var(--leaf); }
+.globe__head h2 { color: var(--white); }
+.globe__sub { color: rgba(255,255,255,.82); }
+.globe__index a { color: rgba(255,255,255,.92); border-color: rgba(255,255,255,.3); }
+.globe__index a:hover { background: rgba(255,255,255,.1); }
+.place__card { background: rgba(6, 10, 18, .72); border: 1px solid rgba(255,255,255,.14); box-shadow: 0 30px 60px -30px rgba(0,0,0,.8); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.place__txt p:last-child { color: rgba(255,255,255,.84); }
+.globe .card__where { color: var(--lichen); }
+@media (max-width: 900px) {
+  /* La cabecera del globo usa el mismo cielo, alineado con la capa de fondo (sin costura) */
+  .globe__sky, .globe__stage { background: #03060C url(../img/espacio-nasa.webp) center top / auto 100svh no-repeat; }
+  .globe__stage::after { display: none; }
+  .place__card { background: rgba(6, 10, 18, .86); }
+}
+
+/* v5.2b: el cielo queda fijo de verdad (overflow:hidden anulaba el sticky) y se mueve apenas: deriva lenta + estrellas que titilan */
+.globe__bg { overflow: clip; }
+.globe__sky::before, .globe__sky::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .2; }
+.globe__sky::before { background-image:
+  radial-gradient(1.6px 1.6px at 8% 18%, #fff 60%, transparent 62%), radial-gradient(1.2px 1.2px at 23% 72%, #fff 60%, transparent 62%),
+  radial-gradient(2px 2px at 37% 12%, #DDE9FF 60%, transparent 62%), radial-gradient(1.4px 1.4px at 52% 84%, #fff 60%, transparent 62%),
+  radial-gradient(1.8px 1.8px at 66% 28%, #fff 60%, transparent 62%), radial-gradient(1.2px 1.2px at 81% 62%, #FFF1DD 60%, transparent 62%),
+  radial-gradient(2px 2px at 93% 14%, #fff 60%, transparent 62%), radial-gradient(1.4px 1.4px at 44% 46%, #fff 60%, transparent 62%); }
+.globe__sky::after { background-image:
+  radial-gradient(1.4px 1.4px at 14% 52%, #fff 60%, transparent 62%), radial-gradient(1.8px 1.8px at 31% 34%, #DDE9FF 60%, transparent 62%),
+  radial-gradient(1.2px 1.2px at 47% 8%, #fff 60%, transparent 62%), radial-gradient(2px 2px at 59% 58%, #fff 60%, transparent 62%),
+  radial-gradient(1.4px 1.4px at 74% 90%, #fff 60%, transparent 62%), radial-gradient(1.6px 1.6px at 88% 40%, #FFF1DD 60%, transparent 62%),
+  radial-gradient(1.2px 1.2px at 4% 88%, #fff 60%, transparent 62%), radial-gradient(1.8px 1.8px at 96% 76%, #fff 60%, transparent 62%); }
+@media (prefers-reduced-motion: no-preference) {
+  .globe__sky::before { animation: titila 3.6s ease-in-out infinite alternate; }
+  .globe__sky::after { animation: titila 5.2s ease-in-out -2.4s infinite alternate; }
+  @keyframes titila { from { opacity: .1; } to { opacity: .95; } }
+}
+@media (prefers-reduced-motion: no-preference) and (max-width: 900px) {
+  /* En celular el cielo de fondo y el de la cabecera se mueven juntos (misma animación) para que no haya costura */
+  .globe__sky, .globe__stage { animation: cielo-movil 120s linear infinite alternate; }
+  @keyframes cielo-movil { from { background-position: 40% 0; } to { background-position: 60% 0; } }
+}

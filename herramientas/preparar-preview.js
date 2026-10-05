@@ -59,6 +59,9 @@ const usadas = [...new Set((textos.match(/assets\/(img|vendor)\/[\w.-]+/g) || []
 // globo.js importa ../vendor/three.module.min.js, que a su vez importa three.core.min.js
 if (extraJs.length) usadas.push('assets/vendor/three.module.min.js', 'assets/vendor/three.core.min.js');
 extraJs.forEach((f) => usadas.push(f));
+// Imágenes que solo aparecen en el CSS (url(../img/…)), como el cielo de la sección del globo
+const css = fs.readFileSync(path.join(R, 'assets', 'css', 'style.css'), 'utf8');
+(css.match(/url\(\.\.\/img\/[\w.-]+\)/g) || []).forEach((u) => usadas.push('assets/img/' + u.slice(11, -1)));
 const files = { 'assets/css/style.css': 'produccion/preview/assets/css/style.css', 'assets/js/main.js': 'produccion/preview/assets/js/main.js' };
 [...new Set(usadas)].forEach((f) => { files[f] = f; });
 fs.writeFileSync(path.join(OUT, 'files.json'), JSON.stringify(files, null, 1));

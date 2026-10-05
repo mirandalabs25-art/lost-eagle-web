@@ -46,18 +46,18 @@ function iniciar() {
 
   // Halo de atmósfera (efecto Fresnel) en el liquen de la marca
   const halo = new THREE.Mesh(
-    new THREE.SphereGeometry(1.035, 64, 64),
+    new THREE.SphereGeometry(1.05, 64, 64),
     new THREE.ShaderMaterial({
-      transparent: true, side: THREE.BackSide, depthWrite: false,
-      uniforms: { color: { value: new THREE.Color('#7FB2E8') } },
+      transparent: true, side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false,
+      uniforms: { color: { value: new THREE.Color('#5EA0FF') } },
       vertexShader: 'varying vec3 vN; void main(){ vN = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
-      fragmentShader: 'uniform vec3 color; varying vec3 vN; void main(){ float i = pow(0.7 - dot(vN, vec3(0.0,0.0,1.0)), 4.0); gl_FragColor = vec4(color, clamp(i * 1.2, 0.0, 0.32)); }'
+      fragmentShader: 'uniform vec3 color; varying vec3 vN; void main(){ float i = pow(0.7 - dot(vN, vec3(0.0,0.0,1.0)), 4.0); gl_FragColor = vec4(color, 1.0) * i * 1.4; }'
     })
   );
   escena.add(halo);
 
-  escena.add(new THREE.AmbientLight(0xffffff, 1.6));
-  const sol = new THREE.DirectionalLight(0xffffff, 0.9);
+  escena.add(new THREE.AmbientLight(0xffffff, 1.0));
+  const sol = new THREE.DirectionalLight(0xffffff, 1.5);
   sol.position.set(-3, 2, 4);
   escena.add(sol);
 
