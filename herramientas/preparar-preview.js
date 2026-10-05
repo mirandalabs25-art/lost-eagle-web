@@ -33,7 +33,7 @@ cuerpo = cuerpo
   .replace(/<a href="https:\/\/www\.(instagram|facebook|youtube)[^"]*"[^>]*>/g, '<a aria-disabled="true" title="Link pending">') // redes
   .replace(/<a href="mailto:"([^>]*)>([\s\S]*?)<\/a>/g, '<span$1>$2</span>');            // correo
 cuerpo = marcar(cuerpo);
-const aviso = '<p class="ph-note" role="note">Design preview. Brand name, logo, founder and links are placeholders. The form does not send messages.</p>\n';
+const aviso = ''; // Rodrigo (05/10): el aviso flotante «Design preview…» sobraba; los marcadores [Brand] y [Your logo] ya lo dicen
 
 const head = index.match(/<head>([\s\S]*?)<\/head>/)[1];
 const fuentes = (head.match(/<link rel="(preconnect|stylesheet)" href="https:\/\/fonts[^>]*>/g) || []).join('\n');
