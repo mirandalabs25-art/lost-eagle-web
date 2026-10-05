@@ -13,7 +13,7 @@
 <link rel="icon" href="assets/img/logo-pie.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Public+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="assets/css/style.css">
 <script type="application/ld+json">
 {
@@ -35,23 +35,40 @@
 
 <a class="skip" href="#contact">Skip to contact form</a>
 
-<header class="hero" id="top">
-  <!-- Cuando lleguen los videos reales: data-video="assets/video/hero.mp4". La imagen queda como póster. -->
-  <div class="hero__media" data-video="">
-    <img src="assets/img/machu-picchu.webp" alt="Machu Picchu at first light, from a Lost Eagle capture" width="1600" height="1217" fetchpriority="high">
-  </div>
-  <nav class="hero__bar" aria-label="Main">
+<!-- El inicio es la vista de un visor de RV: dos lentes con la misma toma real (vista estéreo).
+     El visitante elige el lugar y los lentes lo muestran. -->
+<header class="viewer" id="top">
+  <nav class="bar" aria-label="Main">
     <a href="#top" class="brand"><img src="assets/img/logo-blanco.png" alt="Lost Eagle" width="103" height="34"></a>
-    <a href="#contact" class="bar-link">Contact the team</a>
+    <a href="#contact" class="bar__link">Talk to our team</a>
   </nav>
-  <div class="hero__copy">
-    <h1>Experience the Planet.<br>Protect What Matters.</h1>
-    <p class="descriptor">Lost Eagle is a virtual reality nature studio creating immersive experiences that turn connection with nature into conservation.</p>
-    <a class="btn" href="#contact">Talk to our team</a>
-  </div>
-  <div class="hero__foot">
-    <p class="lockup" aria-label="Experience. Connect. Protect.">Experience. Connect. Protect.</p>
-    <p class="hero__place">Machu Picchu, Peru</p>
+
+  <div class="viewer__stage">
+    <h1>Experience the Planet. <span>Protect What Matters.</span></h1>
+
+    <!-- Cuando lleguen los videos: data-video en cada botón de lugar (assets/video/<lugar>.mp4) -->
+    <div class="lenses" aria-hidden="true">
+      <div class="lens"><img src="assets/img/machu-picchu.webp" alt="" width="1600" height="1217" fetchpriority="high"></div>
+      <div class="lens lens--r"><img src="assets/img/machu-picchu.webp" alt="" width="1600" height="1217"></div>
+    </div>
+
+    <div class="where">
+      <p class="where__line">Experience the world we thought we'd lost.</p>
+      <p class="where__now sr-only" aria-live="polite">Now showing <strong>Machu Picchu, Peru</strong></p>
+      <ul class="where__list" role="list" aria-label="Choose a place">
+        <li><button type="button" class="place is-on" aria-pressed="true" data-img="assets/img/machu-picchu.webp" data-name="Machu Picchu, Peru">Machu Picchu</button></li>
+        <li><button type="button" class="place" aria-pressed="false" data-img="assets/img/choquequirao.webp" data-name="Choquequirao, Peru">Choquequirao</button></li>
+        <li><button type="button" class="place" aria-pressed="false" data-img="assets/img/pisac.webp" data-name="Pisac, Sacred Valley, Peru">Pisac</button></li>
+        <li><button type="button" class="place" aria-pressed="false" data-img="assets/img/perolniyoc.webp" data-name="Perolniyoc Falls, Sacred Valley, Peru">Perolniyoc Falls</button></li>
+        <li><button type="button" class="place" aria-pressed="false" data-img="assets/img/bryce-canyon.webp" data-name="Bryce Canyon, Utah">Bryce Canyon</button></li>
+        <li><button type="button" class="place" aria-pressed="false" data-img="assets/img/new-england-invierno.webp" data-name="New England in winter">New England</button></li>
+      </ul>
+    </div>
+
+    <div class="viewer__intro">
+      <p class="descriptor">Lost Eagle is a virtual reality nature studio creating immersive experiences that turn connection with nature into conservation.</p>
+      <a class="btn" href="#contact">Talk to our team</a>
+    </div>
   </div>
 </header>
 
@@ -59,68 +76,29 @@
 
   <section class="change" aria-labelledby="change-title">
     <div class="wrap">
+      <p class="lockup">Experience. Connect. Protect.</p>
       <h2 id="change-title">Turn Connection into Conservation.</h2>
-      <p class="change__lead">We take you to the most unexplored and vulnerable parts of the planet. Awe turns into a deep connection, connection into care, and care into a strong desire to protect these places.</p>
-      <ol class="beats">
-        <li>
-          <h3>Experience</h3>
-          <p>Fly through real places, modeled in 3D and mapped with photos and video. It feels like being there, because everything you see was there.</p>
-        </li>
-        <li>
-          <h3>Connect</h3>
-          <p>Stand where few people will ever stand. A canyon, a cloud forest, a lost city: close enough to build a personal bond with it.</p>
-        </li>
-        <li>
-          <h3>Protect</h3>
-          <p>People protect what they love. Our experiences give conservation teams, schools and funders a way to make others care.</p>
-        </li>
-      </ol>
-    </div>
-  </section>
-
-  <section class="atlas" aria-labelledby="atlas-title">
-    <div class="atlas__inner">
-      <div class="atlas__head">
-        <h2 id="atlas-title">Experience the world we thought we'd lost.</h2>
-        <p>Places we have captured. Choose one.</p>
+      <div class="change__grid">
+        <p class="chain">We take you to the most unexplored and vulnerable places on Earth<img class="dot" src="assets/img/choquequirao.webp" alt="" width="884" height="590">. Awe becomes connection<img class="dot" src="assets/img/perolniyoc.webp" alt="" width="900" height="548">, connection becomes care, and care becomes a strong desire to protect them.</p>
+        <div class="craft">
+          <h3>Nothing is faked. There is no CGI.</h3>
+          <p>With our EagleVision&trade; process, laser scanners, drones and cameras build organic 3D models of each place, and real photos and video are mapped onto them, every branch, rock and wall. You don't watch the place. You move through it.</p>
+          <ol class="craft__steps">
+            <li><strong>Plan and capture</strong> on location, often with local partners</li>
+            <li><strong>Edit and optimize</strong> into one explorable place</li>
+            <li><strong>Publish and support</strong> on headsets and screens</li>
+          </ol>
+        </div>
       </div>
-      <div class="atlas__body">
-        <ul class="places" role="list">
-          <li><button type="button" class="place is-active" data-img="assets/img/machu-picchu.webp" data-alt="Machu Picchu terraces under the peaks"><span class="place__name">Machu Picchu</span><span class="place__where">Cusco, Peru</span></button></li>
-          <li><button type="button" class="place" data-img="assets/img/choquequirao.webp" data-alt="Choquequirao ruins on a ridge above the Apurímac canyon"><span class="place__name">Choquequirao</span><span class="place__where">Cusco, Peru</span></button></li>
-          <li><button type="button" class="place" data-img="assets/img/pisac.webp" data-alt="Inca terraces of Pisac in the Sacred Valley"><span class="place__name">Pisac</span><span class="place__where">Sacred Valley, Peru</span></button></li>
-          <li><button type="button" class="place" data-img="assets/img/perolniyoc.webp" data-alt="Perolniyoc waterfall dropping into the valley"><span class="place__name">Perolniyoc Falls</span><span class="place__where">Sacred Valley, Peru</span></button></li>
-          <li><button type="button" class="place" data-img="assets/img/bryce-canyon.webp" data-alt="Hoodoos of Bryce Canyon"><span class="place__name">Bryce Canyon</span><span class="place__where">Utah, United States</span></button></li>
-          <li><button type="button" class="place" data-img="assets/img/new-england-invierno.webp" data-alt="A snowy New England forest in winter"><span class="place__name">New England in winter</span><span class="place__where">United States</span></button></li>
-        </ul>
-        <figure class="viewer" aria-live="polite">
-          <img src="assets/img/machu-picchu.webp" alt="Machu Picchu terraces under the peaks" width="1600" height="1217" loading="lazy">
-          <figcaption>Nothing is faked and there is no CGI.</figcaption>
-        </figure>
-      </div>
-    </div>
-  </section>
-
-  <section class="craft" aria-labelledby="craft-title">
-    <div class="wrap craft__grid">
-      <div>
-        <h2 id="craft-title">Every branch, rock and wall, modeled in 3D.</h2>
-        <p>Our EagleVision&trade; process combines laser scanners, drones and cameras. We build organic 3D models of each place and map real photos and video onto them, at a resolution 360° cameras can't reach. The result is a place you can move through, not a video you watch.</p>
-      </div>
-      <ol class="steps">
-        <li><span class="steps__n">1</span><div><h3>Plan and capture</h3><p>Scanning and filming on location, often with local partners.</p></div></li>
-        <li><span class="steps__n">2</span><div><h3>Edit and optimize</h3><p>Models and footage assembled into one continuous, explorable place.</p></div></li>
-        <li><span class="steps__n">3</span><div><h3>Publish and support</h3><p>Delivered to headsets and screens, and kept up to date.</p></div></li>
-      </ol>
     </div>
   </section>
 
   <section class="footprint" aria-labelledby="footprint-title">
-    <img src="assets/img/bryce-canyon.webp" alt="" width="900" height="479" loading="lazy">
     <div class="footprint__copy">
       <h2 id="footprint-title">Visit Earth's wildest places. Leave no footprint.</h2>
       <p>Access to remote and fragile places without the travel emissions.</p>
     </div>
+    <div class="footprint__lens" aria-hidden="true"><img src="assets/img/bryce-canyon.webp" alt="" width="900" height="479" loading="lazy"></div>
   </section>
 
   <section class="audience" aria-labelledby="audience-title">
@@ -129,12 +107,13 @@
       <dl class="audience__list">
         <div><dt>Partners and investors</dt><dd>Teams building the resilience economy who need people to feel what is at stake.</dd></div>
         <div><dt>Healthcare and senior living</dt><dd>Calm, simple journeys into nature for people who can no longer travel to it.</dd></div>
-        <div><dt>Schools, universities and museums</dt><dd>Field trips to places no class could reach, shared on one screen or one headset at a time.</dd></div>
+        <div><dt>Schools, universities and museums</dt><dd>Field trips to places no class could reach.</dd></div>
         <div><dt>Sustainability and policy leaders</dt><dd>A direct way to show decision-makers the places their choices protect.</dd></div>
       </dl>
       <div class="ways">
-        <p><strong>In a VR headset</strong> for one person at a time.</p>
-        <p><strong>On an HD screen with a controller</strong> for classrooms, conferences and groups.</p>
+        <h3>Two ways to step in</h3>
+        <p><strong>A VR headset</strong> for one person at a time.</p>
+        <p><strong>An HD screen with a controller</strong> for classrooms, conferences and groups.</p>
       </div>
       <ul class="proof" role="list">
         <li>“Getting Lost in Nature with Luke” was shortlisted by AIXR for VR Experience of the Year.</li>
@@ -181,7 +160,7 @@
         </div>
         <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="form__end">
-          <button type="submit" class="btn btn--solid">Send message</button>
+          <button type="submit" class="btn">Send message</button>
           <p class="form__status" role="status" aria-live="polite"></p>
         </div>
       </form>

@@ -8,42 +8,46 @@ const FORMULARIO = {
   asunto: 'New message from the Lost Eagle website'
 };
 
-// Video real del hero: si data-video tiene ruta, reemplaza a la imagen (que queda como póster).
-(function heroVideo() {
-  const media = document.querySelector('.hero__media');
-  const src = media && media.dataset.video;
-  if (!src) return;
-  const img = media.querySelector('img');
-  const v = document.createElement('video');
-  Object.assign(v, { muted: true, loop: true, playsInline: true, autoplay: true, preload: 'auto', poster: img.currentSrc || img.src });
-  v.setAttribute('aria-hidden', 'true');
-  v.src = src;
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) v.autoplay = false;
-  img.replaceWith(v);
-  v.play().catch(() => {});
-})();
-
-// Atlas: elegir un lugar cambia la imagen.
-(function atlas() {
+// El visor: elegir un lugar cambia lo que muestran los dos lentes.
+// Cuando lleguen los videos, cada botón lleva data-video y los dos lentes reproducen ese clip.
+(function visor() {
   const buttons = document.querySelectorAll('.place');
-  const img = document.querySelector('.viewer img');
-  if (!buttons.length || !img) return;
+  const lenses = document.querySelector('.lenses');
+  const now = document.querySelector('.where__now strong');
+  if (!buttons.length || !lenses) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  buttons.forEach(b => b.setAttribute('aria-pressed', b.classList.contains('is-active')));
+
+  function fill(btn) {
+    lenses.querySelectorAll('.lens').forEach(lens => {
+      const old = lens.querySelector('img, video');
+      let el;
+      if (btn.dataset.video) {
+        el = document.createElement('video');
+        Object.assign(el, { muted: true, loop: true, playsInline: true, autoplay: !reduce, preload: 'auto', poster: btn.dataset.img, src: btn.dataset.video });
+      } else {
+        el = document.createElement('img');
+        el.src = btn.dataset.img; el.alt = '';
+      }
+      el.style.animation = 'none';
+      old.replaceWith(el);
+      if (el.play) el.play().catch(() => {});
+    });
+    now.textContent = btn.dataset.name;
+    lenses.classList.remove('is-fading');
+  }
 
   function show(btn) {
-    if (btn.classList.contains('is-active')) return;
-    buttons.forEach(b => { b.classList.toggle('is-active', b === btn); b.setAttribute('aria-pressed', b === btn); });
-    const swap = () => { img.src = btn.dataset.img; img.alt = btn.dataset.alt; img.classList.remove('is-fading'); };
-    if (reduce) return swap();
-    img.classList.add('is-fading');
-    setTimeout(swap, 300);
+    if (btn.classList.contains('is-on')) return;
+    buttons.forEach(b => { b.classList.toggle('is-on', b === btn); b.setAttribute('aria-pressed', String(b === btn)); });
+    if (reduce) return fill(btn);
+    lenses.classList.add('is-fading');
+    setTimeout(() => fill(btn), 320);
   }
-  buttons.forEach(b => {
-    b.addEventListener('click', () => show(b));
-    b.addEventListener('mouseenter', () => { if (matchMedia('(hover: hover)').matches) show(b); });
-  });
-  // Precarga liviana: las imágenes del atlas pesan 50-210 KB.
+  buttons.forEach(b => b.addEventListener('click', () => show(b)));
+  // Si el primer lugar ya tiene video, se pone al cargar.
+  const first = document.querySelector('.place.is-on');
+  if (first && first.dataset.video) fill(first);
+  // Precarga liviana: las imágenes pesan 50-210 KB.
   addEventListener('load', () => buttons.forEach(b => { const i = new Image(); i.src = b.dataset.img; }));
 })();
 
