@@ -1,6 +1,6 @@
 /* Lost Eagle — globo 3D con sus lugares (efecto firma G03 del catálogo).
    El globo queda fijo (sticky) y gira hasta el lugar de la tarjeta que está en pantalla.
-   Textura: NASA Blue Marble (dominio público), llevada a la paleta de la marca. Sin WebGL o con movimiento
+   Textura: NASA Blue Marble (dominio público), en sus colores reales (pedido de Rodrigo, 05/10). Sin WebGL o con movimiento
    reducido, la sección queda como lista de tarjetas (clase .globe--quieto). */
 import * as THREE from '../vendor/three.module.min.js';
 
@@ -46,18 +46,18 @@ function iniciar() {
 
   // Halo de atmósfera (efecto Fresnel) en el liquen de la marca
   const halo = new THREE.Mesh(
-    new THREE.SphereGeometry(1.07, 64, 64),
+    new THREE.SphereGeometry(1.035, 64, 64),
     new THREE.ShaderMaterial({
-      transparent: true, side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false,
-      uniforms: { color: { value: new THREE.Color('#C9DDB2') } },
+      transparent: true, side: THREE.BackSide, depthWrite: false,
+      uniforms: { color: { value: new THREE.Color('#7FB2E8') } },
       vertexShader: 'varying vec3 vN; void main(){ vN = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
-      fragmentShader: 'uniform vec3 color; varying vec3 vN; void main(){ float i = pow(0.7 - dot(vN, vec3(0.0,0.0,1.0)), 4.0); gl_FragColor = vec4(color, 1.0) * i * 0.85; }'
+      fragmentShader: 'uniform vec3 color; varying vec3 vN; void main(){ float i = pow(0.7 - dot(vN, vec3(0.0,0.0,1.0)), 4.0); gl_FragColor = vec4(color, clamp(i * 1.2, 0.0, 0.32)); }'
     })
   );
   escena.add(halo);
 
-  escena.add(new THREE.AmbientLight(0xffffff, 0.75));
-  const sol = new THREE.DirectionalLight(0xffffff, 1.6);
+  escena.add(new THREE.AmbientLight(0xffffff, 1.6));
+  const sol = new THREE.DirectionalLight(0xffffff, 0.9);
   sol.position.set(-3, 2, 4);
   escena.add(sol);
 
@@ -71,9 +71,10 @@ function iniciar() {
   const puntos = lugares.map((li) => {
     if (li.hasAttribute('data-sin-punto')) return null;
     const grupo = new THREE.Group();
-    const centro = new THREE.Mesh(new THREE.SphereGeometry(0.018, 16, 16), new THREE.MeshBasicMaterial({ color: '#C9DDB2' }));
-    const anillo = new THREE.Mesh(new THREE.RingGeometry(0.03, 0.04, 40), new THREE.MeshBasicMaterial({ color: '#8FCB7E', transparent: true, opacity: 0, side: THREE.DoubleSide }));
-    grupo.add(centro, anillo);
+    const centro = new THREE.Mesh(new THREE.SphereGeometry(0.018, 16, 16), new THREE.MeshBasicMaterial({ color: '#1F5E36' }));
+    const borde = new THREE.Mesh(new THREE.RingGeometry(0.018, 0.026, 32), new THREE.MeshBasicMaterial({ color: '#FFFFFF', side: THREE.DoubleSide }));
+    const anillo = new THREE.Mesh(new THREE.RingGeometry(0.03, 0.04, 40), new THREE.MeshBasicMaterial({ color: '#2F7443', transparent: true, opacity: 0, side: THREE.DoubleSide }));
+    grupo.add(borde, centro, anillo);
     const pos = aVector(+li.dataset.lat, +li.dataset.lon, 1.005);
     grupo.position.copy(pos);
     grupo.lookAt(pos.clone().multiplyScalar(2));
@@ -119,7 +120,7 @@ function iniciar() {
   lugares.forEach((l) => io.observe(l));
 
   function medir() {
-    const w = escenario.clientWidth, h = escenario.clientHeight;
+    const w = canvas.clientWidth, h = canvas.clientHeight;
     renderer.setSize(w, h, false);
     camara.aspect = w / h;
     camara.updateProjectionMatrix();

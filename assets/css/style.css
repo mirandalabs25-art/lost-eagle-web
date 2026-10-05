@@ -320,3 +320,24 @@ a { color: inherit; }
 
 /* Los elementos que GSAP corre antes de animarlos no deben ensanchar la página (clip no rompe el sticky) */
 .content, .globe { overflow-x: clip; }
+
+/* ---------- v5.1 (pedido de Rodrigo, 05/10): sección del globo en blanco, Tierra con colores reales, globo más chico en celular ---------- */
+.globe { color: var(--ink); }
+.globe__bg { background: #FFFFFF; opacity: 1; }
+.globe .label--light { color: var(--moss-d); }
+.globe__sub { color: var(--soft); }
+.globe__index a { color: var(--ink); border-color: var(--rule); }
+.globe__index a:hover { background: var(--mist); }
+.place__card { background: #FFFFFF; border: 1px solid var(--rule); box-shadow: 0 24px 50px -30px rgba(20, 38, 31, .35); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.place__txt p:last-child { color: var(--soft); }
+.globe .card__where { color: var(--moss-d); }
+@media (max-width: 900px) {
+  .globe__stage { height: 34svh; }
+  .place__card { background: #FFFFFF; }
+}
+@media (max-width: 900px) {
+  /* En celular el globo es una «cabecera» blanca fija: el texto y las tarjetas pasan por debajo, no por encima */
+  .globe__stage { z-index: 3; height: 40svh; padding-top: 64px; background: #FFFFFF; overflow: visible; }
+  .globe__stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: -28px; height: 28px; background: linear-gradient(#FFFFFF, rgba(255,255,255,0)); pointer-events: none; }
+  .place__card { opacity: 1; transform: none; }
+}
