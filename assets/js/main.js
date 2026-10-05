@@ -25,6 +25,31 @@ const clamp01 = (v) => Math.min(1, Math.max(0, v));
   v.play().catch(() => {});
 })();
 
+// Scroll suave (S03, Lenis) sincronizado con ScrollTrigger. Los enlaces internos usan el mismo scroll suave.
+let lenis = null;
+if (!REDUCE && window.Lenis) {
+  lenis = new Lenis({ lerp: 0.1 });
+  if (window.gsap && window.ScrollTrigger) {
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((t) => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+  } else {
+    const raf = (t) => { lenis.raf(t); requestAnimationFrame(raf); };
+    requestAnimationFrame(raf);
+  }
+}
+document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
+  const id = a.getAttribute('href');
+  if (id.length < 2) return;
+  const el = document.querySelector(id);
+  if (!el) return;
+  e.preventDefault();
+  const destino = id === '#inicio' ? 0 : el;
+  if (lenis) lenis.scrollTo(destino, { offset: id.startsWith('#lugar-') ? -innerHeight * 0.3 : -80, duration: 1.4 });
+  else if (destino === 0) scrollTo({ top: 0, behavior: REDUCE ? 'instant' : 'smooth' });
+  else el.scrollIntoView({ behavior: REDUCE ? 'instant' : 'smooth' });
+}));
+
 // Misión: dividir en palabras para revelarlas con el scroll.
 const words = (function splitWords() {
   const el = document.querySelector('.reveal-words');
@@ -54,6 +79,7 @@ document.querySelectorAll('.step').forEach(s => {
   const pin = parade && parade.querySelector('.parade__pin');
   const track = parade && parade.querySelector('.parade__track');
   const bg = parade && parade.querySelector('.parade__bg');
+  const gsec = document.querySelector('.globe'), gbg = gsec && gsec.querySelector('.globe__bg');
   let travel = 0;
   const measure = () => { if (track) travel = Math.max(0, track.scrollWidth - pin.clientWidth); };
   // Flechas del desfile: saltan a la tarjeta anterior o siguiente (el desfile depende del scroll vertical).
@@ -85,6 +111,8 @@ document.querySelectorAll('.step').forEach(s => {
       const entrada = clamp01((y - (parade.offsetTop - vh)) / vh); // mientras sube sobre la foto
       bg.style.setProperty('--op', String(Math.min(0.94, entrada * 0.35 + a * 1.4)));
     }
+    // Globo: la sección sube sobre la foto fija y se oscurece mientras entra.
+    if (gsec) gbg.style.setProperty('--op', String(Math.min(0.97, clamp01((y - (gsec.offsetTop - vh)) / vh) * 1.15)));
     // Proceso: al bajar por la sección, se enciende el paso 1, 2 y 3 (salvo que el visitante haya elegido uno).
     if (processSection && !elegido) {
       const r = processSection.getBoundingClientRect();
@@ -118,8 +146,9 @@ addEventListener('load', () => {
   g.from('.hero__desc, .hero .btn, .hero__foot', { y: 24, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, delay: 0.6 });
   g.from('.top > *', { y: -30, opacity: 0, duration: 0.8, ease: 'power3.out', delay: 0.4 });
 
-  // Tarjetas del desfile: entran en escalera al subir sobre la foto.
-  g.from('.card', { y: 80, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.08, scrollTrigger: { trigger: '.parade', start: 'top 85%' } });
+  // Encabezado del globo y preguntas frecuentes: aparecen al entrar.
+  g.from('.globe__head > *', { y: 50, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.globe', start: 'top 80%' } });
+  g.from('.faq__list details', { y: 24, opacity: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08, scrollTrigger: { trigger: '.faq', start: 'top 75%' } });
 
   // Los tres pasos de la misión: la imagen se abre como una cortina y se mueve más lento que la página.
   g.utils.toArray('.beats__img').forEach(box => {

@@ -29,6 +29,7 @@ cuerpo = cuerpo
   .replace(/<!--[\s\S]*?-->/g, '')                                                     // comentarios internos
   .replace(/<img[^>]*logo-blanco\.png[^>]*>/g, '<span class="ph-logo">[Your logo]</span>') // logo
   .replace(/<img[^>]*luke-farrer\.webp[^>]*>/g, '<div class="ph-photo"><span>Founder photo</span></div>') // foto del fundador
+  .replace(/<img[^>]*pantalla-mando\.webp[^>]*>/g, '<div class="ph-photo ph-photo--small"><span>Screen photo</span></div>') // la pantalla muestra su logo
   .replace(/<a href="https:\/\/www\.(instagram|facebook|youtube)[^"]*"[^>]*>/g, '<a aria-disabled="true" title="Link pending">') // redes
   .replace(/<a href="mailto:"([^>]*)>([\s\S]*?)<\/a>/g, '<span$1>$2</span>');            // correo
 cuerpo = marcar(cuerpo);
@@ -36,23 +37,30 @@ const aviso = '<p class="ph-note" role="note">Design preview. Brand name, logo, 
 
 const head = index.match(/<head>([\s\S]*?)<\/head>/)[1];
 const fuentes = (head.match(/<link rel="(preconnect|stylesheet)" href="https:\/\/fonts[^>]*>/g) || []).join('\n');
+const hojasLocales = (head.match(/<link rel="stylesheet" href="assets\/vendor\/[^"]+">/g) || []).join('\n');
 const extra = `<style>
 .ph-logo { display: inline-flex; align-items: center; height: 34px; padding: 0 12px; border: 1.5px dashed currentColor; border-radius: 8px; font: 600 .8125rem/1 var(--head); letter-spacing: .08em; text-transform: uppercase; opacity: .9; white-space: nowrap; }
 .ph-photo { width: 100%; height: 100%; display: grid; place-items: center; border: 2px dashed rgba(20, 38, 31, .35); border-radius: 18px; }
+.ph-photo--small { height: 190px; width: auto; margin: 20px; border-radius: 12px; }
 .ph-photo span { font: 600 .875rem/1 var(--head); letter-spacing: .14em; text-transform: uppercase; color: var(--soft); }
 .ph-note { position: fixed; z-index: 70; left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); width: max-content; max-width: calc(100% - 32px); padding: 9px 16px; border-radius: 999px; background: rgba(15, 34, 29, .9); color: var(--lichen); font: 500 .8125rem/1.35 var(--text); text-align: center; box-shadow: 0 10px 30px -12px rgba(0,0,0,.6); }
 a[aria-disabled="true"] { cursor: default; }
 </style>`;
 
-const pagina = `<title>VR Nature Studio Preview</title>\n${fuentes}\n<link rel="stylesheet" href="assets/css/style.css">\n${extra}\n${aviso}${cuerpo.trim()}\n`;
+const pagina = `<title>VR Nature Studio Preview</title>\n${fuentes}\n${hojasLocales}\n<link rel="stylesheet" href="assets/css/style.css">\n${extra}\n${aviso}${cuerpo.trim()}\n`;
 fs.writeFileSync(path.join(OUT, 'index.html'), pagina);
 fs.copyFileSync(path.join(R, 'assets', 'css', 'style.css'), path.join(OUT, 'assets', 'css', 'style.css'));
 fs.writeFileSync(path.join(OUT, 'assets', 'js', 'main.js'), marcar(fs.readFileSync(path.join(R, 'assets', 'js', 'main.js'), 'utf8')));
 
-// Solo las imágenes que la página usa (sin logo ni foto del fundador).
-const usadas = [...new Set((pagina.match(/assets\/img\/[\w.-]+/g) || []))];
+// Solo los archivos que la página y sus scripts usan (sin logo ni foto del fundador).
+const extraJs = ['assets/js/globo.js'].filter((f) => fs.existsSync(path.join(R, f)));
+const textos = pagina + extraJs.map((f) => fs.readFileSync(path.join(R, f), 'utf8')).join('\n');
+const usadas = [...new Set((textos.match(/assets\/(img|vendor)\/[\w.-]+/g) || []))];
+// globo.js importa ../vendor/three.module.min.js, que a su vez importa three.core.min.js
+if (extraJs.length) usadas.push('assets/vendor/three.module.min.js', 'assets/vendor/three.core.min.js');
+extraJs.forEach((f) => usadas.push(f));
 const files = { 'assets/css/style.css': 'produccion/preview/assets/css/style.css', 'assets/js/main.js': 'produccion/preview/assets/js/main.js' };
-usadas.forEach((f) => { files[f] = f; });
+[...new Set(usadas)].forEach((f) => { files[f] = f; });
 fs.writeFileSync(path.join(OUT, 'files.json'), JSON.stringify(files, null, 1));
 
 // Control: no debe quedar ningún dato de la marca real.

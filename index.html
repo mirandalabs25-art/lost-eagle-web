@@ -17,6 +17,7 @@
      REVISAR: al publicar en lost-eagle.com, agregar su kit (<link rel="stylesheet" href="https://use.typekit.net/cnf2sak.css">)
      y se usan las originales. Mientras tanto: Jost (equivalente libre de Futura) y Figtree. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Figtree:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/vendor/lenis.css">
 <link rel="stylesheet" href="assets/css/style.css">
 <script type="application/ld+json">
 {
@@ -34,6 +35,46 @@
     "https://www.instagram.com/losteaglestudios/",
     "https://www.facebook.com/Lost-Eagle-Studios-109590774133790/"
   ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "What is Lost Eagle?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Lost Eagle is a virtual reality nature studio creating immersive experiences that turn connection with nature into conservation."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Is it CGI?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No. Nothing is faked and there is no CGI. Laser scanners, drones and cameras build organic 3D models of real places, and real photos and video are mapped onto them."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "How do people watch it?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "In a VR headset, one person at a time, or on an HD screen with a controller for classrooms, conferences and groups."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Where have you captured?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "On three continents: Claustral Canyon in Australia; Horseshoe Bend and New Hampshire in the United States; and Machu Picchu, Choquequirao, Pisac and the Amazon in Peru."
+   }
+  }
+ ]
 }
 </script>
 </head>
@@ -73,31 +114,33 @@
 
 <div class="hero-space" aria-hidden="true"></div>
 
-<!-- Desfile horizontal de lugares sobre la foto fija -->
-<section class="parade" id="places" aria-labelledby="places-title">
-  <div class="parade__pin">
-    <div class="parade__bg"></div>
-    <div class="parade__head">
-      <div>
+<!-- Globo 3D con sus lugares (efecto firma, G03): el globo queda fijo y gira hasta cada lugar mientras pasan sus tarjetas.
+     Coordenadas aproximadas a nivel región (no se muestran como dato). La Amazonía no lleva punto: no hay ubicación exacta. -->
+<section class="globe" id="places" aria-labelledby="places-title">
+  <div class="globe__bg"></div>
+  <div class="globe__inner">
+    <div class="globe__stage" aria-hidden="true">
+      <canvas id="globo"></canvas>
+      <p class="globe__credit">Earth imagery: NASA</p>
+    </div>
+    <div class="globe__content">
+      <header class="globe__head">
         <p class="label label--light">Places</p>
         <h2 id="places-title">Experience the world we thought we'd lost.</h2>
-        <p class="parade__sub">Real places, captured by our team. Nothing is faked and there is no CGI.</p>
-      </div>
-      <div class="arrows">
-        <button type="button" class="arrow" data-dir="-1" aria-label="Previous place"><span aria-hidden="true"></span></button>
-        <button type="button" class="arrow arrow--next" data-dir="1" aria-label="Next place"><span aria-hidden="true"></span></button>
-      </div>
+        <p class="globe__sub">Real places, captured by our team on three continents. Nothing is faked and there is no CGI.</p>
+        <nav class="globe__index" aria-label="Jump to a place"><a href="#lugar-0">Claustral Canyon</a> <a href="#lugar-1">Horseshoe Bend</a> <a href="#lugar-2">New Hampshire</a> <a href="#lugar-3">Flume Gorge</a> <a href="#lugar-4">Machu Picchu</a> <a href="#lugar-5">Choquequirao</a> <a href="#lugar-6">Pisac</a> <a href="#lugar-7">The Amazon</a></nav>
+      </header>
+      <ol class="places" role="list">
+        <li class="place" data-lat="-33.55" data-lon="150.35" id="lugar-0"><div class="place__card"><img src="assets/img/claustral-canyon.webp" alt="Light falling into Claustral Canyon" loading="lazy"><div class="place__txt"><h3>Claustral Canyon</h3><p class="card__where">Blue Mountains, Australia</p><p>Our first laser scan, funded on Kickstarter in 2013 and now exhibited at the Govetts Leap Visitor Centre.</p></div></div></li>
+        <li class="place" data-lat="36.88" data-lon="-111.51" id="lugar-1"><div class="place__card"><img src="assets/img/horseshoe-bend.webp" alt="Horseshoe Bend seen from the air" loading="lazy"><div class="place__txt"><h3>Horseshoe Bend</h3><p class="card__where">Arizona, United States</p><p>The Colorado River's great bend, captured from the air.</p></div></div></li>
+        <li class="place" data-lat="43.9" data-lon="-71.6" id="lugar-2"><div class="place__card"><img src="assets/img/new-hampshire-rio.webp" alt="A misty river in a New Hampshire forest" loading="lazy"><div class="place__txt"><h3>Getting Lost in Nature with Luke</h3><p class="card__where">New Hampshire, United States</p><p>Shortlisted by AIXR for VR Experience of the Year.</p></div></div></li>
+        <li class="place" data-lat="44.1" data-lon="-71.68" id="lugar-3"><div class="place__card"><img src="assets/img/flume-gorge.webp" alt="Flume Gorge in winter" loading="lazy"><div class="place__txt"><h3>Flume Gorge in Winter</h3><p class="card__where">New Hampshire, United States</p><p>A narrow granite gorge in the White Mountains, under snow.</p></div></div></li>
+        <li class="place" data-lat="-13.16" data-lon="-72.55" id="lugar-4"><div class="place__card"><img src="assets/img/machu-picchu-templo-del-sol.webp" alt="The Temple of the Sun at Machu Picchu" loading="lazy"><div class="place__txt"><h3>Machu Picchu</h3><p class="card__where">Cusco, Peru</p><p>Filmed without tourists in 2021, directed remotely from Boston.</p></div></div></li>
+        <li class="place" data-lat="-13.39" data-lon="-72.87" id="lugar-5"><div class="place__card"><img src="assets/img/choquequirao.webp" alt="Stone walls of Choquequirao" loading="lazy"><div class="place__txt"><h3>Choquequirao</h3><p class="card__where">Cusco, Peru</p><p>The hidden Machu Picchu, four days away on foot.</p></div></div></li>
+        <li class="place" data-lat="-13.42" data-lon="-71.85" id="lugar-6"><div class="place__card"><img src="assets/img/pisac.webp" alt="Inca terraces of Pisac" loading="lazy"><div class="place__txt"><h3>Pisac</h3><p class="card__where">Sacred Valley, Peru</p><p>Inca terraces above the Sacred Valley.</p></div></div></li>
+        <li class="place" data-lat="-9.5" data-lon="-74.5" data-sin-punto id="lugar-7"><div class="place__card"><img src="assets/img/amazonia.webp" alt="Flooded forest in the Peruvian Amazon" loading="lazy"><div class="place__txt"><h3>The Amazon</h3><p class="card__where">Peru</p><p>Flooded forest, seen from above the canopy.</p></div></div></li>
+      </ol>
     </div>
-    <ul class="parade__track" role="list">
-      <li class="card"><img src="assets/img/claustral-canyon.webp" alt="Light falling into Claustral Canyon" loading="lazy"><div class="card__txt"><h3>Claustral Canyon</h3><p class="card__where">Blue Mountains, Australia</p><p>Our first laser scan, funded on Kickstarter in 2013.</p></div></li>
-      <li class="card"><img src="assets/img/horseshoe-bend.webp" alt="Horseshoe Bend seen from the air" loading="lazy"><div class="card__txt"><h3>Horseshoe Bend</h3><p class="card__where">Arizona, United States</p><p>The Colorado River's great bend, captured from the air.</p></div></li>
-      <li class="card"><img src="assets/img/new-hampshire-rio.webp" alt="A misty river in a New Hampshire forest" loading="lazy"><div class="card__txt"><h3>Getting Lost in Nature with Luke</h3><p class="card__where">New Hampshire, United States</p><p>Shortlisted by AIXR for VR Experience of the Year.</p></div></li>
-      <li class="card"><img src="assets/img/flume-gorge.webp" alt="Flume Gorge in winter" loading="lazy"><div class="card__txt"><h3>Flume Gorge in Winter</h3><p class="card__where">New Hampshire, United States</p><p>A narrow granite gorge in the White Mountains, under snow.</p></div></li>
-      <li class="card"><img src="assets/img/machu-picchu-templo-del-sol.webp" alt="The Temple of the Sun at Machu Picchu" loading="lazy"><div class="card__txt"><h3>Machu Picchu</h3><p class="card__where">Cusco, Peru</p><p>Filmed without tourists in 2021, directed remotely from Boston.</p></div></li>
-      <li class="card"><img src="assets/img/choquequirao.webp" alt="Stone walls of Choquequirao" loading="lazy"><div class="card__txt"><h3>Choquequirao</h3><p class="card__where">Cusco, Peru</p><p>The hidden Machu Picchu, four days away on foot.</p></div></li>
-      <li class="card"><img src="assets/img/amazonia.webp" alt="Flooded forest in the Peruvian Amazon" loading="lazy"><div class="card__txt"><h3>The Amazon</h3><p class="card__where">Peru</p><p>Flooded forest, seen from above the canopy.</p></div></li>
-      <li class="card"><img src="assets/img/pisac.webp" alt="Inca terraces of Pisac" loading="lazy"><div class="card__txt"><h3>Pisac</h3><p class="card__where">Sacred Valley, Peru</p><p>Inca terraces above the Sacred Valley.</p></div></li>
-    </ul>
   </div>
 </section>
 
@@ -189,6 +232,23 @@
     </div>
   </section>
 
+  <section class="faq" id="faq" aria-labelledby="faq-title">
+    <div class="wrap faq__grid">
+      <div>
+        <p class="label">Questions</p>
+        <h2 id="faq-title">What people ask us.</h2>
+      </div>
+      <div class="faq__list">
+        <details open><summary>What is Lost Eagle?</summary><p>Lost Eagle is a virtual reality nature studio creating immersive experiences that turn connection with nature into conservation.</p></details>
+        <details><summary>Is it CGI?</summary><p>No. Nothing is faked and there is no CGI. Laser scanners, drones and cameras build organic 3D models of real places, and real photos and video are mapped onto them.</p></details>
+        <details><summary>How do people watch it?</summary><p>In a VR headset, one person at a time, or on an HD screen with a controller for classrooms, conferences and groups.</p></details>
+        <details><summary>Who is it for?</summary><p>Partners and investors in the resilience economy, healthcare and senior living, schools, universities and museums, and sustainability and policy leaders.</p></details>
+        <details><summary>Where have you captured?</summary><p>On three continents: Claustral Canyon in Australia; Horseshoe Bend and New Hampshire in the United States; and Machu Picchu, Choquequirao, Pisac and the Amazon in Peru, with Cusco partners Tinkuy Travel and Doslados Studios.</p></details>
+        <details><summary>How can we work together?</summary><p>Tell us about your organization and what you have in mind using the form below, and our team will reply by email.</p></details>
+      </div>
+    </div>
+  </section>
+
   <section class="contact" id="contact" aria-labelledby="contact-title">
     <img class="contact__bg" src="assets/img/new-hampshire-rio.webp" alt="" loading="lazy">
     <div class="wrap contact__grid">
@@ -233,14 +293,16 @@
         <!-- REVISAR: no encontramos el enlace del canal; por ahora va al video de su web -->
         <a href="https://www.youtube.com/watch?v=OfYvU5jLFaA" rel="noopener" target="_blank" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.2 9.2v5.6l4.8-2.8z" class="fill"/></svg></a>
       </div>
-      <p class="foot__meta">Lost Eagle Studios LLC<br>Boston, Massachusetts</p>
+      <p class="foot__meta">Lost Eagle Studios LLC<br>Boston, Massachusetts<br><small>Earth imagery: NASA Visible Earth</small></p>
     </div>
   </footer>
 
 </main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="assets/vendor/gsap.min.js" defer></script>
+<script src="assets/vendor/ScrollTrigger.min.js" defer></script>
+<script src="assets/vendor/lenis.min.js" defer></script>
 <script src="assets/js/main.js" defer></script>
+<script type="module" src="assets/js/globo.js"></script>
 </body>
 </html>
