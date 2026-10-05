@@ -1,4 +1,4 @@
-/* Lost Eagle — one page. */
+/* Lost Eagle — one page v3: efectos de scroll. Sin GSAP o con movimiento reducido, la página se ve completa y quieta. */
 
 // Formulario → correo comercial. REVISAR: falta el correo y la clave del servicio de envío
 // (Web3Forms o Formspree, a decidir). Mientras endpoint sea null, la página NO dice que se envió.
@@ -8,48 +8,130 @@ const FORMULARIO = {
   asunto: 'New message from the Lost Eagle website'
 };
 
-// El visor: elegir un lugar cambia lo que muestran los dos lentes.
-// Cuando lleguen los videos, cada botón lleva data-video y los dos lentes reproducen ese clip.
-(function visor() {
-  const buttons = document.querySelectorAll('.place');
-  const lenses = document.querySelector('.lenses');
-  const now = document.querySelector('.where__now strong');
-  if (!buttons.length || !lenses) return;
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (REDUCE) document.documentElement.classList.add('no-anim');
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
 
-  function fill(btn) {
-    lenses.querySelectorAll('.lens').forEach(lens => {
-      const old = lens.querySelector('img, video');
-      let el;
-      if (btn.dataset.video) {
-        el = document.createElement('video');
-        Object.assign(el, { muted: true, loop: true, playsInline: true, autoplay: !reduce, preload: 'auto', poster: btn.dataset.img, src: btn.dataset.video });
-      } else {
-        el = document.createElement('img');
-        el.src = btn.dataset.img; el.alt = '';
-      }
-      el.style.animation = 'none';
-      old.replaceWith(el);
-      if (el.play) el.play().catch(() => {});
-    });
-    now.textContent = btn.dataset.name;
-    lenses.classList.remove('is-fading');
-  }
-
-  function show(btn) {
-    if (btn.classList.contains('is-on')) return;
-    buttons.forEach(b => { b.classList.toggle('is-on', b === btn); b.setAttribute('aria-pressed', String(b === btn)); });
-    if (reduce) return fill(btn);
-    lenses.classList.add('is-fading');
-    setTimeout(() => fill(btn), 320);
-  }
-  buttons.forEach(b => b.addEventListener('click', () => show(b)));
-  // Si el primer lugar ya tiene video, se pone al cargar.
-  const first = document.querySelector('.place.is-on');
-  if (first && first.dataset.video) fill(first);
-  // Precarga liviana: las imágenes pesan 50-210 KB.
-  addEventListener('load', () => buttons.forEach(b => { const i = new Image(); i.src = b.dataset.img; }));
+// Video real del hero: si data-video tiene ruta, reemplaza a la imagen (que queda como póster).
+(function heroVideo() {
+  const hero = document.querySelector('.hero');
+  const src = hero && hero.dataset.video;
+  if (!src) return;
+  const img = hero.querySelector('.hero__img');
+  const v = document.createElement('video');
+  Object.assign(v, { muted: true, loop: true, playsInline: true, autoplay: !REDUCE, preload: 'auto', poster: img.currentSrc || img.src, src });
+  v.setAttribute('aria-hidden', 'true');
+  img.replaceWith(v);
+  v.play().catch(() => {});
 })();
+
+// Misión: dividir en palabras para revelarlas con el scroll.
+const words = (function splitWords() {
+  const el = document.querySelector('.reveal-words');
+  if (!el) return null;
+  el.innerHTML = el.textContent.trim().split(/\s+/).map(w => `<span class="w">${w}</span>`).join(' ');
+  return { el, list: el.querySelectorAll('.w') };
+})();
+
+// Bucle de scroll: cabecera, titular del hero, desfile horizontal y palabras de la misión.
+(function scrollLoop() {
+  const top = document.getElementById('top-bar');
+  const heroCopy = document.querySelector('.hero__copy');
+  const lockup = document.querySelector('.hero__lockup');
+  const parade = document.querySelector('.parade');
+  const pin = parade && parade.querySelector('.parade__pin');
+  const track = parade && parade.querySelector('.parade__track');
+  const bg = parade && parade.querySelector('.parade__bg');
+  let travel = 0;
+  const measure = () => { if (track) travel = Math.max(0, track.scrollWidth - pin.clientWidth); };
+
+  function frame() {
+    const y = scrollY, vh = innerHeight;
+    top.classList.toggle('is-solid', y > vh * 0.5);
+    if (REDUCE) return;
+    // El titular del hero se desvanece y sube al empezar a bajar.
+    const h = clamp01(y / (vh * 0.7));
+    heroCopy.style.opacity = String(1 - h);
+    heroCopy.style.transform = `translate3d(0, ${-h * 60}px, 0)`;
+    lockup.style.opacity = String(1 - h);
+    // Desfile: el scroll vertical se vuelve avance horizontal; el fondo pasa de transparente a opaco.
+    if (parade) {
+      const recorrido = parade.offsetHeight - vh;
+      const a = clamp01((y - parade.offsetTop) / recorrido);
+      track.style.transform = `translate3d(${-a * travel}px, 0, 0)`;
+      const entrada = clamp01((y - (parade.offsetTop - vh)) / vh); // mientras sube sobre la foto
+      bg.style.setProperty('--op', String(Math.min(0.94, entrada * 0.35 + a * 1.4)));
+    }
+    // Misión: las palabras se encienden a medida que el párrafo cruza la pantalla.
+    if (words) {
+      const r = words.el.getBoundingClientRect();
+      const p = clamp01((vh * 0.85 - r.top) / (r.height + vh * 0.35));
+      const n = Math.round(p * words.list.length);
+      words.list.forEach((w, i) => { w.style.opacity = i < n ? '1' : ''; });
+    }
+  }
+  let pend = false;
+  addEventListener('scroll', () => { if (!pend) { pend = true; requestAnimationFrame(() => { pend = false; frame(); }); } }, { passive: true });
+  addEventListener('resize', () => { measure(); frame(); });
+  addEventListener('load', () => { measure(); frame(); });
+  measure(); frame();
+})();
+
+// Proceso: la imagen fija cambia según el paso que está en pantalla.
+(function process() {
+  const steps = document.querySelectorAll('.step');
+  const imgs = document.querySelectorAll('.process__media img');
+  if (!steps.length || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const i = Number(e.target.dataset.step);
+      steps.forEach(s => s.classList.toggle('is-on', s === e.target));
+      imgs.forEach((im, k) => im.classList.toggle('is-on', k === i));
+    });
+  }, { rootMargin: '-45% 0px -45% 0px' });
+  steps.forEach(s => io.observe(s));
+})();
+
+// GSAP: entrada del hero, parallax y apariciones. Se carga desde cdnjs; si no está, no pasa nada.
+addEventListener('load', () => {
+  const g = window.gsap, ST = window.ScrollTrigger;
+  if (!g || !ST || REDUCE) return;
+  g.registerPlugin(ST);
+
+  // Entrada: el titular sube línea por línea y la foto se asienta.
+  g.from('.hero__img, .hero video', { scale: 1.14, duration: 2.6, ease: 'power2.out' });
+  g.from('.hero h1 .line > span', { yPercent: 110, duration: 1.1, ease: 'power4.out', stagger: 0.12, delay: 0.15 });
+  g.from('.hero__desc, .hero .btn, .hero__lockup', { y: 24, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, delay: 0.6 });
+  g.from('.top', { y: -30, opacity: 0, duration: 0.8, ease: 'power3.out', delay: 0.4 });
+
+  // Tarjetas del desfile: entran en escalera al subir sobre la foto.
+  g.from('.card', { y: 80, opacity: 0, duration: 1, ease: 'power3.out', stagger: 0.08, scrollTrigger: { trigger: '.parade', start: 'top 85%' } });
+
+  // Los tres pasos de la misión: la imagen se abre como una cortina y se mueve más lento que la página.
+  g.utils.toArray('.beats__img').forEach(box => {
+    g.from(box, { clipPath: 'inset(100% 0 0 0 round 18px)', duration: 1.3, ease: 'power3.inOut', scrollTrigger: { trigger: box, start: 'top 85%' } });
+    g.fromTo(box.querySelector('img'), { yPercent: -12 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: box, start: 'top bottom', end: 'bottom top', scrub: true } });
+  });
+  g.from('.mission__big', { y: 60, opacity: 0, duration: 1.1, ease: 'power3.out', scrollTrigger: { trigger: '.mission__big', start: 'top 85%' } });
+
+  // Águila: parallax de la foto y titular que sube.
+  g.fromTo('.eagle__img', { yPercent: -10 }, { yPercent: 10, ease: 'none', scrollTrigger: { trigger: '.eagle', start: 'top bottom', end: 'bottom top', scrub: true } });
+  g.from('.eagle__copy > *', { y: 70, opacity: 0, duration: 1.2, ease: 'power3.out', stagger: 0.12, scrollTrigger: { trigger: '.eagle', start: 'top 60%' } });
+
+  // Historia: la línea de tiempo se dibuja con el scroll.
+  const tl = document.querySelector('.timeline');
+  g.fromTo(tl, { '--draw': 0 }, { '--draw': 1, ease: 'none', scrollTrigger: { trigger: tl, start: 'top 70%', end: 'bottom 60%', scrub: true } });
+  g.from('.timeline li', { x: 40, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.15, scrollTrigger: { trigger: tl, start: 'top 75%' } });
+  g.from('.story__luke', { y: 60, opacity: 0, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: '.story__luke', start: 'top 90%' } });
+
+  // Públicos y formas de verlo.
+  g.from('.audience__list > div', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.audience__list', start: 'top 80%' } });
+  g.from('.ways figure', { y: 40, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.15, scrollTrigger: { trigger: '.ways', start: 'top 85%' } });
+
+  // Contacto: la foto de fondo se mueve lento.
+  g.fromTo('.contact__bg', { yPercent: -8, scale: 1.1 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: '.contact', start: 'top bottom', end: 'bottom top', scrub: true } });
+});
 
 // Formulario.
 (function form() {
