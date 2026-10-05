@@ -8,8 +8,10 @@ const FORMULARIO = {
   asunto: 'New message from the Lost Eagle website'
 };
 
+// ?captura → modo para sacar fotos de cada sección (propuesta): todo en su estado final, sin entradas animadas ni scroll suave.
+const CAPTURA = new URLSearchParams(location.search).has('captura');
 const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (REDUCE) document.documentElement.classList.add('no-anim');
+if (REDUCE || CAPTURA) document.documentElement.classList.add('no-anim');
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 
 // Video real del hero: si data-video tiene ruta, reemplaza a la imagen (que queda como póster).
@@ -27,7 +29,7 @@ const clamp01 = (v) => Math.min(1, Math.max(0, v));
 
 // Scroll suave (S03, Lenis) sincronizado con ScrollTrigger. Los enlaces internos usan el mismo scroll suave.
 let lenis = null;
-if (!REDUCE && window.Lenis) {
+if (!REDUCE && !CAPTURA && window.Lenis) {
   lenis = new Lenis({ lerp: 0.1 });
   if (window.gsap && window.ScrollTrigger) {
     lenis.on('scroll', ScrollTrigger.update);
@@ -114,7 +116,7 @@ document.querySelectorAll('.step').forEach(s => {
     // Globo: la sección sube sobre la foto fija y se oscurece mientras entra.
     if (gsec) gbg.style.setProperty('--op', String(Math.min(0.97, clamp01((y - (gsec.offsetTop - vh)) / vh) * 1.15)));
     // Proceso: al bajar por la sección, se enciende el paso 1, 2 y 3 (salvo que el visitante haya elegido uno).
-    if (processSection && !elegido) {
+    if (processSection && !elegido && !CAPTURA) {
       const r = processSection.getBoundingClientRect();
       const p = clamp01((vh * 0.75 - r.top) / (r.height * 0.9));
       setStep(Math.min(2, Math.floor(p * 3)));
@@ -137,7 +139,7 @@ document.querySelectorAll('.step').forEach(s => {
 // GSAP: entrada del hero, parallax y apariciones. Se carga desde cdnjs; si no está, no pasa nada.
 addEventListener('load', () => {
   const g = window.gsap, ST = window.ScrollTrigger;
-  if (!g || !ST || REDUCE) return;
+  if (!g || !ST || REDUCE || CAPTURA) return;
   g.registerPlugin(ST);
 
   // Entrada: el titular sube línea por línea y la foto se asienta.

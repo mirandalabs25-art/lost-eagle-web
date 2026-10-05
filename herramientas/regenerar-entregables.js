@@ -27,6 +27,14 @@ const abs = Object.fromEntries(Object.entries(files).map(([k, v]) => [k, path.jo
 fs.writeFileSync(path.join(R, 'produccion', 'preview', 'files-abs.json'), JSON.stringify(abs, null, 1));
 
 paso('2 y 3. Prueba + capturas para la propuesta');
+// Una captura limpia de cada sección (modo ?captura) → páginas «sección por sección» de la propuesta
+console.log(correr('node', [path.join(R, 'herramientas', 'capturar-secciones.js')]).trim().split(/\r?\n/).length + ' secciones capturadas');
+correr('python', ['-c', `import os
+from PIL import Image
+S=r'${path.join(CAP, 'secciones')}'; D=r'${path.join(PROPUESTA, 'img', 'secciones')}'
+os.makedirs(D, exist_ok=True)
+for f in os.listdir(S):
+    Image.open(os.path.join(S,f)).convert('RGB').save(os.path.join(D,f[:-4]+'.jpg'),quality=84)`]);
 const ultimas = (out) => out.trim().split('\n').slice(-2).join(' | ');
 console.log('escritorio:', ultimas(correr('node', [PROBAR, html, 'escritorio', '--puntos=14', '--conservar'])));
 const py = `
